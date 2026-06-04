@@ -1,17 +1,36 @@
 # Meow OS
 
-Lightweight Linux distribution for Python and PySide development.
+Lightweight Linux distribution focused on Python and PySide development.
 
-## Goals
+## Features
 
-- Lightweight
-- Python ready
-- PySide ready
-- EXE building
-- Old hardware support
+* Debian based
+* LXQt desktop
+* Python preinstalled
+* PySide6 support
+* Nuitka support
+* Wine support
+* EXE building tools
+* Lightweight for old hardware
 
-## Recommended hardware
+## Requirements
 
-- Intel Core 2 Duo
-- 2 GB RAM
-- 20 GB storage
+* Intel Core 2 Duo or better
+* 2 GB RAM minimum
+* 20 GB storage
+
+## Components
+
+### Meow Center
+
+Main control center for:
+
+* Build EXE
+* Run Python Projects
+* Check Updates
+* System Information
+* Package Installation
+
+## Version
+
+Current version: 0.1.0
