@@ -10,3 +10,4 @@ git
 zip
 unzip
 jdk-openjdk
+syslinux
