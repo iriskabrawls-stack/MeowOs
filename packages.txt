@@ -4,10 +4,12 @@ xorg-server
 xorg-xinit
 openbox
 xterm
+
 # Python и библиотека интерфейса
 python
 python-pip
 python-pyside6
+
 # Инструменты для будущей компиляции APK/EXE на ноуте
 git
 zip
