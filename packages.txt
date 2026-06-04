@@ -11,3 +11,5 @@ zip
 unzip
 jdk-openjdk
 syslinux
+memtest86+
+memtest86+-efi
