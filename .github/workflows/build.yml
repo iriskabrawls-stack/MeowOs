@@ -13,9 +13,15 @@ jobs:
       - name: Build ISO inside Arch Linux Docker Container
         run: |
           docker run --privileged --rm -v ${{ github.workspace }}:/workspace archlinux:latest bash -c "
+            # Инициализируем и настраиваем ключи GPG для pacman
             pacman-key --init
             pacman-key --populate archlinux
-            pacman -Syu --noconfirm archiso
+
+            # Обновляем списки пакетов и устанавливаем archiso
+            pacman -Syu --noconfirm
+            pacman -S --noconfirm archiso
+
+            # Создаём профиль сборки
             mkdir -p /tmp/profile
             cp -r /usr/share/archiso/configs/releng/* /tmp/profile/
 
@@ -26,6 +32,7 @@ jobs:
               echo 'Error: packages.txt not found!' && exit 1
             fi
 
+            # Копируем .xinitrc в профиль
             mkdir -p /tmp/profile/airootfs/etc/skel/
             cp /workspace/.xinitrc /tmp/profile/airootfs/etc/skel/.xinitrc
             chmod +x /tmp/profile/airootfs/etc/skel/.xinitrc
@@ -33,7 +40,6 @@ jobs:
             # Активируем NetworkManager по умолчанию
             mkdir -p /tmp/profile/airootfs/etc/systemd/system/multi-user.target.wants/
             ln -sf /usr/lib/systemd/system/NetworkManager.service /tmp/profile/airootfs/etc/systemd/system/multi-user.target.wants/NetworkManager.service
-
 
             # Создаём директорию для вывода ISO
             mkdir -p /workspace/out
