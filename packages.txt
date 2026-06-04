@@ -1,5 +1,5 @@
 # Сеть и графика
-networkmanager
+NetworkManager
 xorg-server
 xorg-xinit
 openbox
