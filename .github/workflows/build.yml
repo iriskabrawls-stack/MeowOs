@@ -3,7 +3,7 @@ name: Build Arch Linux ISO
 on:
   push:
     branches: [ "main", "master" ]
-  workflow_dispatch:  # ручной запуск
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,8 +20,9 @@ jobs:
             pacman -Syu --noconfirm archiso
             mkdir -p /tmp/profile
             cp -r /usr/share/archiso/configs/releng/* /tmp/profile/
+            # Удаляем комментарии и пустые строки из packages.txt
             if [ -f /workspace/packages.txt ]; then
-              cat /workspace/packages.txt >> /tmp/profile/packages.x86_64
+              grep -vE '^\s*#|^\s*$' /workspace/packages.txt > /tmp/profile/packages.x86_64
             else
               echo 'Error: packages.txt not found!' && exit 1
             fi
