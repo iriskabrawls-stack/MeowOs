@@ -1,7 +1,9 @@
-name: Build Custom Arch ISO
+name: Build Arch Linux ISO
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:  # ручной запуск
 
 jobs:
   build:
@@ -13,43 +15,26 @@ jobs:
       - name: Build ISO inside Arch Linux Docker Container
         run: |
           docker run --privileged --rm -v ${{ github.workspace }}:/workspace archlinux:latest bash -c "
-            # Инициализируем и настраиваем ключи GPG для pacman
             pacman-key --init
             pacman-key --populate archlinux
-
-            # Обновляем списки пакетов и устанавливаем archiso
-            pacman -Syu --noconfirm
-            pacman -S --noconfirm archiso
-
-            # Создаём профиль сборки
+            pacman -Syu --noconfirm archiso
             mkdir -p /tmp/profile
             cp -r /usr/share/archiso/configs/releng/* /tmp/profile/
-
-            # Проверяем существование файла packages.txt и копируем пакеты
             if [ -f /workspace/packages.txt ]; then
               cat /workspace/packages.txt >> /tmp/profile/packages.x86_64
             else
               echo 'Error: packages.txt not found!' && exit 1
             fi
-
-            # Копируем .xinitrc в профиль
             mkdir -p /tmp/profile/airootfs/etc/skel/
             cp /workspace/.xinitrc /tmp/profile/airootfs/etc/skel/.xinitrc
             chmod +x /tmp/profile/airootfs/etc/skel/.xinitrc
-
-            # Активируем NetworkManager по умолчанию
             mkdir -p /tmp/profile/airootfs/etc/systemd/system/multi-user.target.wants/
             ln -sf /usr/lib/systemd/system/NetworkManager.service /tmp/profile/airootfs/etc/systemd/system/multi-user.target.wants/NetworkManager.service
-
-            # Создаём директорию для вывода ISO
-            mkdir -p /workspace/out
-
-            # Запускаем сборку ISO
             mkarchiso -v -w /tmp/archiso-tmp -o /workspace/out /tmp/profile
           "
 
-      - name: Upload Bootable ISO
+      - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
-          name: my-custom-os
-          path: out/*.iso
+          name: archlinux-iso
+          path: ${{ github.workspace }}/out/*.iso
