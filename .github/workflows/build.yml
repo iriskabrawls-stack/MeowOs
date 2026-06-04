@@ -1,0 +1,34 @@
+name: Build Custom Arch ISO
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build ISO inside Arch Linux Docker Container
+        run: |
+          docker run --privileged --rm -v ${{ github.workspace }}:/workspace archlinux:latest bash -c "
+            pacman-key --init
+            pacman-key --populate archlinux
+            pacman -Syu --noconfirm archiso
+            mkdir -p /tmp/profile
+            cp -r /usr/share/archiso/configs/releng/* /tmp/profile/
+            cat /workspace/packages.txt >> /tmp/profile/packages.x86_64
+            mkdir -p /tmp/profile/airootfs/etc/skel/
+            cp /workspace/.xinitrc /tmp/profile/airootfs/etc/skel/.xinitrc
+            chmod +x /tmp/profile/airootfs/etc/skel/.xinitrc
+            mkdir -p /tmp/profile/airootfs/etc/systemd/system/multi-user.target.wants/
+            ln -sf /usr/lib/systemd/system/NetworkManager.service /tmp/profile/airootfs/etc/systemd/system/multi-user.target.wants/NetworkManager.service
+            mkarchiso -v -w /tmp/archiso-tmp -o /workspace/out /tmp/profile
+          "
+
+      - name: Upload Bootable ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-custom-os
+          path: out/*.iso
