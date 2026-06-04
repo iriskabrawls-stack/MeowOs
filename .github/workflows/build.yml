@@ -21,13 +21,24 @@ jobs:
             mkdir -p /tmp/profile
             cp -r /usr/share/archiso/configs/releng/* /tmp/profile/
             
-            # Обработка packages.txt
-            grep -vE '^\s*#|^\s*\$' /workspace/packages.txt > /tmp/profile/packages.x86_64
-            
-            # ДИАГНОСТИКА: покажем итоговый список пакетов
-            echo '===== Содержимое packages.x86_64 ====='
-            cat /tmp/profile/packages.x86_64
-            echo '======================================'
+            # Явно создаём список пакетов (без использования packages.txt)
+            cat > /tmp/profile/packages.x86_64 <<'EOF'
+networkmanager
+xorg-server
+xorg-xinit
+openbox
+xterm
+python
+python-pip
+pyside6
+git
+zip
+unzip
+jdk-openjdk
+syslinux
+memtest86+
+memtest86+-efi
+EOF
             
             mkdir -p /tmp/profile/airootfs/etc/skel/
             cp /workspace/.xinitrc /tmp/profile/airootfs/etc/skel/.xinitrc
